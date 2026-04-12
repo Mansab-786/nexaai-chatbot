@@ -1,1 +1,25 @@
-<h1>NexaAI Working 🚀</h1>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>NexaAI Chatbot</title>
+  <style>
+    body { font-family: Arial; background:#0f172a; color:white; }
+    .chat-box { width:400px; margin:50px auto; background:#1e293b; padding:20px; border-radius:10px; }
+    .messages { height:300px; overflow:auto; border:1px solid #334155; padding:10px; }
+    input { width:80%; padding:10px; }
+    button { padding:10px; }
+  </style>
+</head>
+<body>
+
+<div class="chat-box">
+  <h2>NexaAI Assistant</h2>
+  <div class="messages" id="messages"></div>
+
+  <input id="input" placeholder="Ask something..." />
+  <button onclick="sendMessage()">Send</button>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
