@@ -1,28 +1,40 @@
 export default async function handler(req, res) {
-  const userMessage = req.body.message;
+  try {
+    const body = await new Promise((resolve) => {
+      let data = "";
+      req.on("data", chunk => data += chunk);
+      req.on("end", () => resolve(JSON.parse(data)));
+    });
 
-  const response = await fetch(
-    "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=" + process.env.GEMINI_API_KEY,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        contents: [
-          {
-            parts: [{ text: userMessage }],
-          },
-        ],
-      }),
-    }
-  );
+    const userMessage = body.message;
 
-  const data = await response.json();
+    const response = await fetch(
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=" + process.env.GEMINI_API_KEY,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          contents: [
+            {
+              parts: [{ text: userMessage }],
+            },
+          ],
+        }),
+      }
+    );
 
-  const reply =
-    data.candidates?.[0]?.content?.parts?.[0]?.text ||
-    "Sorry, no response.";
+    const data = await response.json();
 
-  res.status(200).json({ reply });
+    const reply =
+      data.candidates?.[0]?.content?.parts?.[0]?.text ||
+      "No response";
+
+    res.status(200).json({ reply });
+
+  } catch (error) {
+    res.status(500).json({ reply: "Error: " + error.message });
+  }
 }
+
