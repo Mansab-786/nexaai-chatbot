@@ -6,7 +6,6 @@ export default async function handler(req, res) {
   try {
     const { messages, system } = req.body;
 
-    // Convert messages to Gemini format (assistant → model)
     const contents = messages.map(m => ({
       role: m.role === 'assistant' ? 'model' : 'user',
       parts: [{ text: m.content }]
@@ -26,9 +25,13 @@ export default async function handler(req, res) {
     );
 
     const data = await response.json();
+    console.log("Gemini raw:", JSON.stringify(data));
 
-    // Return in same format so frontend works without changes
-    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "Sorry, I couldn't respond. Please try again!";
+    if (data.error) {
+      return res.status(200).json({ content: [{ text: "Error: " + data.error.message }] });
+    }
+
+    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "No reply";
     return res.status(200).json({ content: [{ text }] });
 
   } catch (error) {
